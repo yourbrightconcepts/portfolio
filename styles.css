@@ -396,7 +396,6 @@ body.menu-open .site-header {
   font-size: 16.4vw; /* refined by JS to fit the container exactly */
   line-height: 0.9;
   letter-spacing: -0.055em;
-  text-transform: lowercase;
   white-space: nowrap;
   margin-left: -0.04em;
   padding-bottom: 0.06em;
