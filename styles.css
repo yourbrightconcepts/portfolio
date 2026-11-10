@@ -419,6 +419,20 @@ body.menu-open .site-header {
 }
 .js .hero.is-ready .hero__title .char { transform: none; }
 
+/* Sentence version of the heading: wraps over a few lines instead of stretching to one,
+   words never break, and the name (inside <em>) is highlighted against a softer grey. */
+.hero__title .word { display: inline-block; white-space: nowrap; }
+.hero__title--intro {
+  font-size: clamp(2.25rem, 6.4vw, 6.75rem);
+  line-height: 1.04;
+  letter-spacing: -0.045em;
+  white-space: normal;
+  text-wrap: balance;
+  color: var(--muted);
+}
+.hero__title--intro .char.is-hl { color: var(--fg); }
+.js .hero__title--intro .char { transition-delay: calc(var(--i) * 0.02s + 0.1s); }
+
 .hero__rule {
   margin-top: clamp(16px, 2.4vw, 32px);
   transform-origin: left;

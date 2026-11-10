@@ -134,21 +134,34 @@
   var title = document.querySelector('.hero__title');
   var titleInner = document.querySelector('[data-split]');
 
-  // Headline → characters
+  // Headline → characters, grouped into words so a multi-line title never breaks inside a
+  // word (punctuation stays with the word before it). Text inside <em> is the highlighted
+  // part (the name) and is kept on one line.
   (function () {
-    var text = titleInner.textContent;
+    var src = titleInner.cloneNode(true);
     titleInner.textContent = '';
     titleInner.setAttribute('aria-hidden', 'true');
-    Array.prototype.forEach.call(text, function (ch, i) {
-      var wrap = document.createElement('span');
-      wrap.className = 'char-wrap';
-      var c = document.createElement('span');
-      c.className = 'char';
-      c.style.setProperty('--i', i);
-      c.textContent = ch === ' ' ? ' ' : ch;
-      wrap.appendChild(c);
-      titleInner.appendChild(wrap);
-    });
+    var i = 0, word = null;
+    function addText(text, hl) {
+      if (hl) text = text.replace(/\s+/g, ' ');
+      // Break only on ordinary whitespace (\s would also match the non-breaking spaces above)
+      text.split(/([ \t\r\n\f]+)/).forEach(function (tok) {
+        if (!tok) return;
+        if (/^[ \t\r\n\f]+$/.test(tok)) { titleInner.appendChild(document.createTextNode(' ')); word = null; return; }
+        if (!word) { word = document.createElement('span'); word.className = 'word'; titleInner.appendChild(word); }
+        Array.from(tok).forEach(function (ch) { // Array.from keeps emoji in one piece
+          var wrap = document.createElement('span');
+          wrap.className = 'char-wrap';
+          var c = document.createElement('span');
+          c.className = hl ? 'char is-hl' : 'char';
+          c.style.setProperty('--i', i++);
+          c.textContent = ch;
+          wrap.appendChild(c);
+          word.appendChild(wrap);
+        });
+      });
+    }
+    Array.prototype.forEach.call(src.childNodes, function (n) { addText(n.textContent, n.nodeType !== 3); });
   })();
 
   // Section headings → masked lines
@@ -188,6 +201,7 @@
 
   /* ---------------- Hero headline fit + entrance ---------------- */
   function fitTitle() {
+    if (title.classList.contains('hero__title--intro')) return; // the sentence heading wraps at a set size
     var container = title.parentElement;
     var cs = getComputedStyle(container);
     var available = container.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight);
@@ -320,8 +334,10 @@
         });
 
       // 2 — Hero headline letters drift upward at different speeds
-      gsap.to('.hero__title .char-wrap', {
-        yPercent: function (i) { return -(18 + ((i * 7) % 5) * 14); },
+      // (for the sentence heading, whole words drift gently so it stays readable)
+      var introTitle = title.classList.contains('hero__title--intro');
+      gsap.to(introTitle ? '.hero__title .word' : '.hero__title .char-wrap', {
+        yPercent: function (i) { return introTitle ? -(6 + (i % 3) * 4) : -(18 + ((i * 7) % 5) * 14); },
         ease: 'none',
         scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: true }
       });
