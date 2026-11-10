@@ -1,0 +1,10 @@
+# Store text files with LF line endings so edits from different tools
+# (GitHub's web upload, Windows editors, scripts) don't show as whole-file changes.
+* text=auto eol=lf
+
+# Binary assets: never touch line endings
+*.jpg  binary
+*.jpeg binary
+*.png  binary
+*.webp binary
+*.pdf  binary
