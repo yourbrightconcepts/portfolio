@@ -161,7 +161,10 @@
         });
       });
     }
-    Array.prototype.forEach.call(src.childNodes, function (n) { addText(n.textContent, n.nodeType !== 3); });
+    Array.prototype.forEach.call(src.childNodes, function (n) {
+      if (n.nodeName === 'BR') { titleInner.appendChild(document.createElement('br')); word = null; return; }
+      addText(n.textContent, n.nodeType !== 3);
+    });
   })();
 
   // Section headings → masked lines
@@ -219,6 +222,9 @@
     fitTitle();
     if (hasGsap) ScrollTrigger.refresh();
     requestAnimationFrame(function () { hero.classList.add('is-ready'); });
+    // Once the letters have finished rising in, switch on the hover roll (see styles.css)
+    var settleMs = 1300 + title.querySelectorAll('.char').length * 20 + 200;
+    setTimeout(function () { title.classList.add('is-settled'); }, settleMs);
     hero.querySelectorAll('[data-reveal]').forEach(function (el) { el.classList.add('is-in'); });
   }
   fontsReady.then(startHero);

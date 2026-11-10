@@ -423,7 +423,7 @@ body.menu-open .site-header {
    words never break, and the name (inside <em>) is highlighted against a softer grey. */
 .hero__title .word { display: inline-block; white-space: nowrap; }
 .hero__title--intro {
-  font-size: clamp(2.25rem, 6.4vw, 6.75rem);
+  font-size: clamp(2.25rem, 8vw, 8.5rem);
   line-height: 1.04;
   letter-spacing: -0.045em;
   white-space: normal;
@@ -432,6 +432,18 @@ body.menu-open .site-header {
 }
 .hero__title--intro .char.is-hl { color: var(--fg); }
 .js .hero__title--intro .char { transition-delay: calc(var(--i) * 0.02s + 0.1s); }
+
+/* Hover: each letter rolls up out of its mask while an identical copy (its text-shadow,
+   parked just below the mask) rolls into place. Mouse only, after the entrance animation
+   has finished (.is-settled), and never with reduced motion. */
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .js .hero__title.is-settled .char {
+    text-shadow: 0 1.3em 0 currentColor;
+    transition: transform .6s var(--ease);
+    transition-delay: 0s;
+  }
+  .js .hero__title.is-settled .char-wrap:hover .char { transform: translateY(-1.3em); }
+}
 
 .hero__rule {
   margin-top: clamp(16px, 2.4vw, 32px);
@@ -601,28 +613,34 @@ html:not(.js) .showcase__controls { display: none; }
 .showcase.is-paused .showcase__btn .icon-pause { display: none; }
 .showcase.is-paused .showcase__btn .icon-play { display: block; }
 
-.hero__foot {
-  margin-top: auto;
-  padding-top: clamp(80px, 14vh, 180px);
+/* Download CV / LinkedIn / Email buttons, under the intro paragraph */
+.hero__actions {
+  margin-top: clamp(28px, 3.4vw, 48px);
   display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
-  gap: 24px;
+  flex-wrap: wrap;
+  gap: 10px;
 }
-.hero__foot .link-list { color: var(--muted); }
-.hero__foot .link-list a:hover { color: var(--fg); }
-
-.scroll-cue {
+.btn {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
+  min-height: 44px;
+  padding: 0 20px;
+  border: 1px solid var(--line-strong);
+  border-radius: 999px;
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  transition: background-color .35s var(--ease), color .35s var(--ease), border-color .35s var(--ease);
 }
-.scroll-cue svg { width: 13px; height: 13px; animation: nudge 2s var(--ease) 2; }
-.scroll-cue:hover svg { animation-iteration-count: infinite; }
-@keyframes nudge {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(4px); }
-}
+.btn svg { width: 14px; height: 14px; flex: none; transition: transform .45s var(--ease); }
+.btn:hover { background: var(--fg); color: var(--bg); border-color: var(--fg); }
+.btn:hover svg { transform: translateY(-1px); }
+/* Main action: filled, inverts on hover */
+.btn--primary { background: var(--fg); color: var(--bg); border-color: var(--fg); }
+.btn--primary:hover { background: transparent; color: var(--fg); }
+.btn--primary:hover svg { transform: translateY(2px); }
 
 /* Full-bleed visual */
 .bleed {
@@ -1409,7 +1427,6 @@ body.menu-open .edge-blur { opacity: 0; }
   .hero__grid { grid-template-columns: 1fr; }
   .hero__intro, .feature-card { grid-column: 1 / -1; }
   .feature-card { max-width: 520px; }
-  .hero__foot { padding-top: 72px; }
 
   .section-head--split > div,
   .journey__intro { grid-column: 1 / -1; }
@@ -1459,7 +1476,6 @@ body.menu-open .edge-blur { opacity: 0; }
     overflow: hidden; clip-path: inset(50%); white-space: nowrap;
   }
   .marquee__toggle { padding: 0; width: 36px; justify-content: center; }
-  .hero__foot { flex-direction: column; align-items: flex-start; gap: 32px; }
   .metrics { grid-template-columns: 1fr 1fr; column-gap: 16px; }
   .metric__label { font-size: 0.625rem; }
   .toolbox { grid-template-columns: 1fr; }
